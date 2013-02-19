@@ -259,7 +259,7 @@ void default_freeor(void *ptr);
 void default_errorreporter(const char *fmt, va_list ap);
 void default_noticereporter(const char *fmt, va_list ap);
 
-extern int lw_vasprintf (char **result, const char *format, va_list args);
+extern int lw_vasprintf (char **result, const char *format, ...);
 extern int lw_asprintf
 #if __STDC__ || defined(_MSC_VER)
 (char **result, const char *format, ...);

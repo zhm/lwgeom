@@ -156,9 +156,9 @@ va_list *args;
 		return 0;
 }
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 int
-lw_vasprintf (char **result, const char *format, va_list args)
+lw_vasprintf (char **result, const char *format, ...)
 #else
 int
 lw_vasprintf (result, format, args)
@@ -167,11 +167,16 @@ const char *format;
 va_list args;
 #endif
 {
+#ifdef _MSC_VER
+	va_list args;
+	va_start(args, format);
+#endif
 	va_list temp;
 
 	va_copy(temp, args);
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
+  va_end(args);
 	return int_vasprintf (result, format, temp);
 #else
 	return int_vasprintf (result, format, &temp);
