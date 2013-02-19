@@ -54,7 +54,7 @@ va_dcl
 #endif
 
 #if defined(_MSC_VER)
-static int
+int
 int_vasprintf (char **result, const char *format, va_list args)
 #else
 static int
