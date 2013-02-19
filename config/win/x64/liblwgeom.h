@@ -50,6 +50,9 @@ inline double remainder(double x, double y) {
 #include <stdint.h>
 #include "proj_api.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
 * @file liblwgeom.h
 *
@@ -1951,5 +1954,11 @@ LWGEOM* lwgeom_split(const LWGEOM* lwgeom_in, const LWGEOM* blade_in);
  */
 LWGEOM* lwgeom_node(const LWGEOM* lwgeom_in);
 
+#ifdef __cplusplus
+} // end extern "C"
+#endif
+
 #endif /* !defined _LIBLWGEOM_H  */
+
+
 
