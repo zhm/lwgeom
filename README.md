@@ -11,7 +11,7 @@ This is a version of liblwgeom extracted from PostGIS 2.0.2 and converted to val
 # Prerequisites
 - nodejs
 - GEOS (located at `../geos/geos`)
-- Proj4 (located at `..proj/proj`)
+- Proj4 (located at `../proj/proj`)
 
 For Windows, there are more dependencies. Follow the Windows MSVC setup instructions from the `node-gyp` pages [here](https://github.com/TooTallNate/node-gyp)
 

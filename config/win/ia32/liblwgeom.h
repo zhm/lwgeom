@@ -16,6 +16,8 @@
 #ifndef _LIBLWGEOM_H
 #define _LIBLWGEOM_H 1
 
+// patches for compiling as C++ with MSVC
+#ifdef __cplusplus
 #define _USE_MATH_DEFINES
 #define snprintf _snprintf
 #include <cmath>
@@ -41,16 +43,7 @@ inline float roundf(float x) {
 inline double remainder(double x, double y) {
   return (x - (((double)((int)round(x / y))) * y));
 }
-
-
-/* #include <math.h> */
-
-/* double */
-/* remainder (double x, double y) */
-/* { */
-/*   double i = round (x / y); */
-/*   return fma (- i, y, x); */
-/* } */
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -1959,4 +1952,5 @@ LWGEOM* lwgeom_split(const LWGEOM* lwgeom_in, const LWGEOM* blade_in);
 LWGEOM* lwgeom_node(const LWGEOM* lwgeom_in);
 
 #endif /* !defined _LIBLWGEOM_H  */
+
 

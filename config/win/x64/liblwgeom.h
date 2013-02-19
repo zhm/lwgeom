@@ -16,6 +16,8 @@
 #ifndef _LIBLWGEOM_H
 #define _LIBLWGEOM_H 1
 
+// patches for compiling as C++ with MSVC
+#ifdef __cplusplus
 #define _USE_MATH_DEFINES
 #define snprintf _snprintf
 #include <cmath>
@@ -41,6 +43,7 @@ inline float roundf(float x) {
 inline double remainder(double x, double y) {
   return (x - (((double)((int)round(x / y))) * y));
 }
+#endif
 
 #include <stdarg.h>
 #include <stdio.h>
