@@ -156,12 +156,12 @@ va_list *args;
 		return 0;
 }
 
+int
+lw_vasprintf
 #ifdef _MSC_VER
-int
-lw_vasprintf (char **result, const char *format, ...)
+(char **result, const char *format, ...)
 #else
-int
-lw_vasprintf (result, format, args)
+(result, format, args)
 char **result;
 const char *format;
 va_list args;

@@ -162,6 +162,8 @@ default_noticereporter(const char *fmt, va_list ap)
 	 * This is a GNU extension.
 	 * Dunno how to handle errors here.
 	 */
+#ifdef _MSC_VER
+#else
 	if (!lw_vasprintf (&msg, fmt, ap))
 	{
 		va_end (ap);
@@ -169,6 +171,7 @@ default_noticereporter(const char *fmt, va_list ap)
 	}
 	printf("%s\n", msg);
 	free(msg);
+#endif
 }
 
 void
@@ -180,6 +183,8 @@ default_errorreporter(const char *fmt, va_list ap)
 	 * This is a GNU extension.
 	 * Dunno how to handle errors here.
 	 */
+#ifdef _MSC_VER
+#else
 	if (!lw_vasprintf (&msg, fmt, ap))
 	{
 		va_end (ap);
@@ -187,6 +192,7 @@ default_errorreporter(const char *fmt, va_list ap)
 	}
 	fprintf(stderr, "%s\n", msg);
 	free(msg);
+#endif
 	exit(1);
 }
 
