@@ -938,7 +938,7 @@ define_plane(POINTARRAY *pa, PLANE3D *pl)
 	}
 	else
 	{
-		pointsinslice=(int) floor((pa->npoints-1)/4); /*divide the pointarray into 4 slices*/
+		pointsinslice=(int) floor((double)(pa->npoints-1)/4); /*divide the pointarray into 4 slices*/
 	}
 	
 	/*find the avg point*/
@@ -956,7 +956,7 @@ define_plane(POINTARRAY *pa, PLANE3D *pl)
 	sumx=0;
 	sumy=0;
 	sumz=0;
-	numberofvectors= floor((pa->npoints-1)/pointsinslice); /*the number of vectors we try can be 3, 4 or 5*/
+	numberofvectors= floor((double)(pa->npoints-1)/pointsinslice); /*the number of vectors we try can be 3, 4 or 5*/
 	
 	getPoint3dz_p(pa, 0, &p1);
 	for (j=pointsinslice;j<pa->npoints;j+=pointsinslice)

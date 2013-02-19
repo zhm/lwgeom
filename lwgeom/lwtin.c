@@ -93,7 +93,7 @@ int lwtin_is_closed(const LWTIN *tin)
 	/* Max theorical arcs number if no one is shared ... */
 	narcs = 3 * tin->ngeoms;
 
-	arcs = lwalloc(sizeof(struct struct_tin_arcs) * narcs);
+	arcs = (tin_arcs)lwalloc(sizeof(struct struct_tin_arcs) * narcs);
 	for (i=0, carc=0; i < tin->ngeoms ; i++)
 	{
 

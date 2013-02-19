@@ -66,7 +66,7 @@ gbox_to_gml2(const GBOX *bbox, const char *srs, int precision, const char *prefi
 		size = ( sizeof("<Box>/") + (prefixlen*2) ) * 2;
 		if ( srs ) size += strlen(srs) + sizeof(" srsName=..");
 
-		ptr = output = lwalloc(size);
+		ptr = output = (char *)lwalloc(size);
 
 		ptr += sprintf(ptr, "<%sBox", prefix);
 
@@ -93,7 +93,7 @@ gbox_to_gml2(const GBOX *bbox, const char *srs, int precision, const char *prefi
 	size += ( sizeof("<Box><coordinates>/") + (prefixlen*2) ) * 2;
 	if ( srs ) size += strlen(srs) + sizeof(" srsName=..");
 
-	ptr = output = lwalloc(size);
+	ptr = output = (char *)lwalloc(size);
 
 	if ( srs ) ptr += sprintf(ptr, "<%sBox srsName=\"%s\">", prefix, srs);
 	else       ptr += sprintf(ptr, "<%sBox>", prefix);
@@ -121,7 +121,7 @@ gbox_to_gml3(const GBOX *bbox, const char *srs, int precision, int opts, const c
 		size = ( sizeof("<Envelope>/") + (prefixlen*2) ) * 2;
 		if ( srs ) size += strlen(srs) + sizeof(" srsName=..");
 
-		ptr = output = lwalloc(size);
+		ptr = output = (char *)lwalloc(size);
 
 		ptr += sprintf(ptr, "<%sEnvelope", prefix);
 		if ( srs ) ptr += sprintf(ptr, " srsName=\"%s\"", srs);
@@ -145,7 +145,7 @@ gbox_to_gml3(const GBOX *bbox, const char *srs, int precision, int opts, const c
 	if ( srs ) size += strlen(srs) + sizeof(" srsName=..");
 	if ( IS_DIMS(opts) ) size += sizeof(" srsDimension=. .");
 
-	ptr = output = lwalloc(size);
+	ptr = output = (char *)lwalloc(size);
 
 	ptr += sprintf(ptr, "<%sEnvelope", prefix);
 	if ( srs ) ptr += sprintf(ptr, " srsName=\"%s\"", srs);
@@ -285,7 +285,7 @@ asgml2_point(const LWPOINT *point, const char *srs, int precision, const char *p
 	int size;
 
 	size = asgml2_point_size(point, srs, precision, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml2_point_buf(point, srs, output, precision, prefix);
 	return output;
 }
@@ -331,7 +331,7 @@ asgml2_line(const LWLINE *line, const char *srs, int precision, const char *pref
 	int size;
 
 	size = asgml2_line_size(line, srs, precision, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml2_line_buf(line, srs, output, precision, prefix);
 	return output;
 }
@@ -392,7 +392,7 @@ asgml2_poly(const LWPOLY *poly, const char *srs, int precision, const char *pref
 	int size;
 
 	size = asgml2_poly_size(poly, srs, precision, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml2_poly_buf(poly, srs, output, precision, prefix);
 	return output;
 }
@@ -509,7 +509,7 @@ asgml2_multi(const LWCOLLECTION *col, const char *srs, int precision,
 	size_t size;
 
 	size = asgml2_multi_size(col, srs, precision, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml2_multi_buf(col, srs, gml, precision, prefix);
 	return gml;
 }
@@ -627,7 +627,7 @@ asgml2_collection(const LWCOLLECTION *col, const char *srs, int precision,
 	size_t size;
 
 	size = asgml2_collection_size(col, srs, precision, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml2_collection_buf(col, srs, gml, precision, prefix);
 	return gml;
 }
@@ -794,7 +794,7 @@ asgml3_point(const LWPOINT *point, const char *srs, int precision, int opts, con
 	int size;
 
 	size = asgml3_point_size(point, srs, precision, opts, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml3_point_buf(point, srs, output, precision, opts, prefix);
 	return output;
 }
@@ -884,7 +884,7 @@ asgml3_line(const LWLINE *line, const char *srs, int precision, int opts, const 
 	int size;
 
 	size = asgml3_line_size(line, srs, precision, opts, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml3_line_buf(line, srs, output, precision, opts, prefix);
 	return output;
 }
@@ -964,7 +964,7 @@ asgml3_poly(const LWPOLY *poly, const char *srs, int precision, int opts, int is
 	int size;
 
 	size = asgml3_poly_size(poly, srs, precision, opts, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml3_poly_buf(poly, srs, output, precision, opts, is_patch, prefix);
 	return output;
 }
@@ -1016,7 +1016,7 @@ asgml3_triangle(const LWTRIANGLE *triangle, const char *srs, int precision, int 
 	int size;
 
 	size = asgml3_triangle_size(triangle, srs, precision, opts, prefix);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgml3_triangle_buf(triangle, srs, output, precision, opts, prefix);
 	return output;
 }
@@ -1130,7 +1130,7 @@ asgml3_multi(const LWCOLLECTION *col, const char *srs, int precision, int opts, 
 	size_t size;
 
 	size = asgml3_multi_size(col, srs, precision, opts, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml3_multi_buf(col, srs, gml, precision, opts, prefix);
 	return gml;
 }
@@ -1194,7 +1194,7 @@ asgml3_psurface(const LWPSURFACE *psur, const char *srs, int precision, int opts
 	size_t size;
 
 	size = asgml3_psurface_size(psur, srs, precision, opts, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml3_psurface_buf(psur, srs, gml, precision, opts, prefix);
 	return gml;
 }
@@ -1258,7 +1258,7 @@ asgml3_tin(const LWTIN *tin, const char *srs, int precision, int opts, const cha
 	size_t size;
 
 	size = asgml3_tin_size(tin, srs, precision, opts, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml3_tin_buf(tin, srs, gml, precision, opts, prefix);
 	return gml;
 }
@@ -1366,7 +1366,7 @@ asgml3_collection(const LWCOLLECTION *col, const char *srs, int precision, int o
 	size_t size;
 
 	size = asgml3_collection_size(col, srs, precision, opts, prefix);
-	gml = lwalloc(size);
+	gml = (char *)lwalloc(size);
 	asgml3_collection_buf(col, srs, gml, precision, opts, prefix);
 	return gml;
 }

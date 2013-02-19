@@ -29,7 +29,7 @@ char* hexbytes_from_bytes(uint8_t *bytes, size_t size)
 		lwerror("hexbutes_from_bytes: invalid input");
 		return NULL;
 	}
-	hex = lwalloc(size * 2 + 1);
+	hex = (char *)lwalloc(size * 2 + 1);
 	hex[2*size] = '\0';
 	for( i = 0; i < size; i++ )
 	{
@@ -726,7 +726,7 @@ uint8_t* lwgeom_to_wkb(const LWGEOM *geom, uint8_t variant, size_t *size_out)
 	}
 
 	/* Allocate the buffer */
-	buf = lwalloc(buf_size);
+	buf = (uint8_t *)lwalloc(buf_size);
 
 	if ( buf == NULL )
 	{

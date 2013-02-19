@@ -57,7 +57,7 @@ POINTARRAY*
 ptarray_construct_empty(char hasz, char hasm, uint32_t maxpoints)
 {
 	uint8_t dims = gflags(hasz, hasm, 0);
-	POINTARRAY *pa = lwalloc(sizeof(POINTARRAY));
+	POINTARRAY *pa = (POINTARRAY *)lwalloc(sizeof(POINTARRAY));
 	pa->serialized_pointlist = NULL;
 	
 	/* Set our dimsionality info on the bitmap */
@@ -69,7 +69,7 @@ ptarray_construct_empty(char hasz, char hasm, uint32_t maxpoints)
 	
 	/* Allocate the coordinate array */
 	if ( maxpoints > 0 )
-		pa->serialized_pointlist = lwalloc(maxpoints * ptarray_point_size(pa));
+		pa->serialized_pointlist = (uint8_t *)lwalloc(maxpoints * ptarray_point_size(pa));
 	else 
 		pa->serialized_pointlist = NULL;
 
@@ -105,7 +105,7 @@ ptarray_insert_point(POINTARRAY *pa, const POINT4D *p, int where)
 	{
 		pa->maxpoints = 32;
 		pa->npoints = 0;
-		pa->serialized_pointlist = lwalloc(ptarray_point_size(pa) * pa->maxpoints);
+		pa->serialized_pointlist = (uint8_t *)lwalloc(ptarray_point_size(pa) * pa->maxpoints);
 	}
 
 	/* Error out if we have a bad situation */
@@ -116,7 +116,7 @@ ptarray_insert_point(POINTARRAY *pa, const POINT4D *p, int where)
 	if( pa->npoints == pa->maxpoints )
 	{
 		pa->maxpoints *= 2;
-		pa->serialized_pointlist = lwrealloc(pa->serialized_pointlist, ptarray_point_size(pa) * pa->maxpoints);
+		pa->serialized_pointlist = (uint8_t *)lwrealloc(pa->serialized_pointlist, ptarray_point_size(pa) * pa->maxpoints);
 	}
 	
 	/* Make space to insert the new point */
@@ -227,7 +227,7 @@ ptarray_append_ptarray(POINTARRAY *pa1, POINTARRAY *pa2, double gap_tolerance)
 	{
 		pa1->maxpoints = ncap > pa1->maxpoints*2 ?
 		                 ncap : pa1->maxpoints*2;
-		pa1->serialized_pointlist = lwrealloc(pa1->serialized_pointlist, ptsize * pa1->maxpoints);
+		pa1->serialized_pointlist = (uint8_t *)lwrealloc(pa1->serialized_pointlist, ptsize * pa1->maxpoints);
 	}
 
 	memcpy(getPoint_internal(pa1, pa1->npoints),
@@ -279,7 +279,7 @@ ptarray_remove_point(POINTARRAY *pa, int where)
 */
 POINTARRAY* ptarray_construct_reference_data(char hasz, char hasm, uint32_t npoints, uint8_t *ptlist)
 {
-	POINTARRAY *pa = lwalloc(sizeof(POINTARRAY));
+	POINTARRAY *pa = (POINTARRAY *)lwalloc(sizeof(POINTARRAY));
 	LWDEBUGF(5, "hasz = %d, hasm = %d, npoints = %d, ptlist = %p", hasz, hasm, npoints, ptlist);
 	pa->flags = gflags(hasz, hasm, 0);
 	FLAGS_SET_READONLY(pa->flags, 1); /* We don't own this memory, so we can't alter or free it. */
@@ -293,7 +293,7 @@ POINTARRAY* ptarray_construct_reference_data(char hasz, char hasm, uint32_t npoi
 POINTARRAY*
 ptarray_construct_copy_data(char hasz, char hasm, uint32_t npoints, const uint8_t *ptlist)
 {
-	POINTARRAY *pa = lwalloc(sizeof(POINTARRAY));
+	POINTARRAY *pa = (POINTARRAY *)lwalloc(sizeof(POINTARRAY));
 
 	pa->flags = gflags(hasz, hasm, 0);
 	pa->npoints = npoints;
@@ -301,7 +301,7 @@ ptarray_construct_copy_data(char hasz, char hasm, uint32_t npoints, const uint8_
 
 	if ( npoints > 0 )
 	{
-		pa->serialized_pointlist = lwalloc(ptarray_point_size(pa) * npoints);
+		pa->serialized_pointlist = (uint8_t *)lwalloc(ptarray_point_size(pa) * npoints);
 		memcpy(pa->serialized_pointlist, ptlist, ptarray_point_size(pa) * npoints);
 	}
 	else
@@ -618,7 +618,7 @@ ptarray_merge(POINTARRAY *pa1, POINTARRAY *pa2)
 POINTARRAY *
 ptarray_clone_deep(const POINTARRAY *in)
 {
-	POINTARRAY *out = lwalloc(sizeof(POINTARRAY));
+	POINTARRAY *out = (POINTARRAY *)lwalloc(sizeof(POINTARRAY));
 	size_t size;
 
 	LWDEBUG(3, "ptarray_clone_deep called.");
@@ -630,7 +630,7 @@ ptarray_clone_deep(const POINTARRAY *in)
 	FLAGS_SET_READONLY(out->flags, 0);
 
 	size = in->npoints * ptarray_point_size(in);
-	out->serialized_pointlist = lwalloc(size);
+	out->serialized_pointlist = (uint8_t *)lwalloc(size);
 	memcpy(out->serialized_pointlist, in->serialized_pointlist, size);
 
 	return out;
@@ -642,7 +642,7 @@ ptarray_clone_deep(const POINTARRAY *in)
 POINTARRAY *
 ptarray_clone(const POINTARRAY *in)
 {
-	POINTARRAY *out = lwalloc(sizeof(POINTARRAY));
+	POINTARRAY *out = (POINTARRAY *)lwalloc(sizeof(POINTARRAY));
 
 	LWDEBUG(3, "ptarray_clone_deep called.");
 
@@ -1182,7 +1182,7 @@ ptarray_simplify(POINTARRAY *inpts, double epsilon, unsigned int minpts)
 	POINT4D pt;
 
 	/* Allocate recursion stack */
-	stack = lwalloc(sizeof(int)*inpts->npoints);
+	stack = (int *)lwalloc(sizeof(int)*inpts->npoints);
 
 	p1 = 0;
 	stack[++sp] = inpts->npoints-1;

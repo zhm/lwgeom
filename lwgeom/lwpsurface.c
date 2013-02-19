@@ -105,7 +105,7 @@ int lwpsurface_is_closed(const LWPSURFACE *psurface)
 		narcs += patch->rings[0]->npoints - 1;
 	}
 
-	arcs = lwalloc(sizeof(struct struct_psurface_arcs) * narcs);
+	arcs = (struct struct_psurface_arcs *)lwalloc(sizeof(struct struct_psurface_arcs) * narcs);
 	for (i=0, carc=0; i < psurface->ngeoms ; i++)
 	{
 

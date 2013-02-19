@@ -313,7 +313,7 @@ lwgeom_as_multi(const LWGEOM *lwgeom)
 	}
 	else
 	{
-		ogeoms = lwalloc(sizeof(LWGEOM*));
+		ogeoms = (LWGEOM **)lwalloc(sizeof(LWGEOM*));
 		ogeoms[0] = lwgeom_clone(lwgeom);
 
 		/* Sub-geometries are not allowed to have bboxes or SRIDs, move the bbox to the collection */

@@ -683,7 +683,7 @@ LWGEOM* wkt_parser_collection_new(LWGEOM *geom)
 	}
 	
 	/* Create our geometry array */
-	geoms = lwalloc(sizeof(LWGEOM*) * ngeoms);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM*) * ngeoms);
 	geoms[0] = geom;
 	
 	/* Make a new collection */

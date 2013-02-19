@@ -132,7 +132,7 @@ asx3d3_point(const LWPOINT *point, char *srs, int precision, int opts, const cha
 	int size;
 
 	size = asx3d3_point_size(point, srs, precision, opts, defid);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asx3d3_point_buf(point, srs, output, precision, opts, defid);
 	return output;
 }
@@ -285,7 +285,7 @@ asx3d3_line(const LWLINE *line, char *srs, int precision, int opts, const char *
 	int size;
 
 	size = sizeof("<LineSet><CoordIndex ='' /></LineSet>") + asx3d3_line_size(line, srs, precision, opts, defid);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asx3d3_line_buf(line, srs, output, precision, opts, defid);
 	return output;
 }
@@ -354,7 +354,7 @@ asx3d3_triangle(const LWTRIANGLE *triangle, char *srs, int precision, int opts, 
 	int size;
 
 	size = asx3d3_triangle_size(triangle, srs, precision, opts, defid);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asx3d3_triangle_buf(triangle, srs, output, precision, opts, defid);
 	return output;
 }
@@ -487,7 +487,7 @@ asx3d3_multi(const LWCOLLECTION *col, char *srs, int precision, int opts, const 
 	size_t size;
 
 	size = asx3d3_multi_size(col, srs, precision, opts, defid);
-	x3d = lwalloc(size);
+	x3d = (char *)lwalloc(size);
 	asx3d3_multi_buf(col, srs, x3d, precision, opts, defid);
 	return x3d;
 }
@@ -576,7 +576,7 @@ asx3d3_psurface(const LWPSURFACE *psur, char *srs, int precision, int opts, cons
 	size_t size;
 
 	size = asx3d3_psurface_size(psur, srs, precision, opts, defid);
-	x3d = lwalloc(size);
+	x3d = (char *)lwalloc(size);
 	asx3d3_psurface_buf(psur, srs, x3d, precision, opts, defid);
 	return x3d;
 }
@@ -657,7 +657,7 @@ asx3d3_tin(const LWTIN *tin, char *srs, int precision, int opts, const char *def
 	size_t size;
 
 	size = asx3d3_tin_size(tin, srs, precision, opts, defid);
-	x3d = lwalloc(size);
+	x3d = (char *)lwalloc(size);
 	asx3d3_tin_buf(tin, srs, x3d, precision, opts, defid);
 	return x3d;
 }
@@ -766,7 +766,7 @@ asx3d3_collection(const LWCOLLECTION *col, char *srs, int precision, int opts, c
 	size_t size;
 
 	size = asx3d3_collection_size(col, srs, precision, opts, defid);
-	x3d = lwalloc(size);
+	x3d = (char *)lwalloc(size);
 	asx3d3_collection_buf(col, srs, x3d, precision, opts, defid);
 	return x3d;
 }

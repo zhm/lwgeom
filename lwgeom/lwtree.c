@@ -113,7 +113,7 @@ RECT_NODE* rect_node_leaf_new(const POINTARRAY *pa, int i)
 	if ( FP_EQUALS(p1->x, p2->x) && FP_EQUALS(p1->y, p2->y) )
 		return NULL;
 
-	node = lwalloc(sizeof(RECT_NODE));
+	node = (RECT_NODE *)lwalloc(sizeof(RECT_NODE));
 	node->p1 = p1;
 	node->p2 = p2;
 	node->xmin = FP_MIN(p1->x,p2->x);
@@ -131,7 +131,7 @@ RECT_NODE* rect_node_leaf_new(const POINTARRAY *pa, int i)
 */
 RECT_NODE* rect_node_internal_new(RECT_NODE *left_node, RECT_NODE *right_node)
 {
-	RECT_NODE *node = lwalloc(sizeof(RECT_NODE));
+	RECT_NODE *node = (RECT_NODE *)lwalloc(sizeof(RECT_NODE));
 	node->p1 = NULL;
 	node->p2 = NULL;
 	node->xmin = FP_MIN(left_node->xmin, right_node->xmin);
@@ -168,7 +168,7 @@ RECT_NODE* rect_tree_new(const POINTARRAY *pa)
 	** uniformly distributed collection of measures.
 	*/
 	num_edges = pa->npoints - 1;
-	nodes = lwalloc(sizeof(RECT_NODE*) * pa->npoints);
+	nodes = (RECT_NODE **)lwalloc(sizeof(RECT_NODE*) * pa->npoints);
 	j = 0;
 	for ( i = 0; i < num_edges; i++ )
 	{

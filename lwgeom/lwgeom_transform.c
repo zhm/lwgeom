@@ -10,7 +10,7 @@
  *
  **********************************************************************/
 
-#include "../postgis_config.h"
+#include "postgis_config.h"
 #include "liblwgeom.h"
 #include "lwgeom_log.h"
 #include <string.h>
@@ -173,7 +173,7 @@ lwproj_from_string(const char *str1)
 
 	if (slen == 0) return NULL;
 
-	str = lwalloc(slen+1);
+	str = (char *)lwalloc(slen+1);
 	strcpy(str, str1);
 
 	/*

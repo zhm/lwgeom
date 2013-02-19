@@ -245,7 +245,7 @@ lwpoly_make_geos_friendly(LWPOLY *poly)
 	if ( ! poly->nrings ) return (LWGEOM*)poly;
 
 	/* Allocate enough pointers for all rings */
-	new_rings = lwalloc(sizeof(POINTARRAY*)*poly->nrings);
+	new_rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY*)*poly->nrings);
 
 	/* All rings must be closed and have > 3 points */
 	for (i=0; i<poly->nrings; i++)
@@ -313,9 +313,9 @@ lwcollection_make_geos_friendly(LWCOLLECTION *g)
 	LWCOLLECTION *ret;
 
 	/* enough space for all components */
-	new_geoms = lwalloc(sizeof(LWGEOM *)*g->ngeoms);
+	new_geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*g->ngeoms);
 
-	ret = lwalloc(sizeof(LWCOLLECTION));
+	ret = (LWCOLLECTION *)lwalloc(sizeof(LWCOLLECTION));
 	memcpy(ret, g, sizeof(LWCOLLECTION));
 
 	for (i=0; i<g->ngeoms; i++)
@@ -699,8 +699,8 @@ LWGEOM_GEOS_makeValidMultiLine(const GEOSGeometry* gin)
 	ngeoms = GEOSGetNumGeometries(gin);
 
 	nlines_alloc = ngeoms;
-	lines = lwalloc(sizeof(GEOSGeometry*)*nlines_alloc);
-	points = lwalloc(sizeof(GEOSGeometry*)*ngeoms);
+	lines = (GEOSGeometry **)lwalloc(sizeof(GEOSGeometry*)*nlines_alloc);
+	points = (GEOSGeometry **)lwalloc(sizeof(GEOSGeometry*)*ngeoms);
 
 	for (i=0; i<ngeoms; ++i)
 	{
@@ -724,7 +724,7 @@ LWGEOM_GEOS_makeValidMultiLine(const GEOSGeometry* gin)
 		{
 			nsubgeoms=GEOSGetNumGeometries(vg);
 			nlines_alloc += nsubgeoms;
-			lines = lwrealloc(lines, sizeof(GEOSGeometry*)*nlines_alloc);
+			lines = (GEOSGeometry **)lwrealloc(lines, sizeof(GEOSGeometry*)*nlines_alloc);
 			for (j=0; j<nsubgeoms; ++j)
 			{
 				const GEOSGeometry* gc = GEOSGetGeometryN(vg, j);

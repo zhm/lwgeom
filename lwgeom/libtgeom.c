@@ -28,7 +28,7 @@ tgeom_new(uint8_t type, int hasz, int hasm)
 {
 	TGEOM *tgeom;
 
-	tgeom = lwalloc(sizeof(TGEOM));
+	tgeom = (TGEOM *)lwalloc(sizeof(TGEOM));
 	tgeom->type = type;
 	FLAGS_SET_Z(tgeom->flags, hasz);
 	FLAGS_SET_M(tgeom->flags, hasm);
@@ -171,8 +171,8 @@ tgeom_add_face_edge(TGEOM *tgeom, int face_id, POINT4D *s, POINT4D *e)
 
 		edge_id = ++tgeom->nedges; /* edge_id is 1 based */
 		tgeom->edges[edge_id] = (TEDGE*) lwalloc(sizeof(TEDGE));
-		tgeom->edges[edge_id]->s = lwalloc(sizeof(POINT4D));
-		tgeom->edges[edge_id]->e = lwalloc(sizeof(POINT4D));
+		tgeom->edges[edge_id]->s = (POINT4D *)lwalloc(sizeof(POINT4D));
+		tgeom->edges[edge_id]->e = (POINT4D *)lwalloc(sizeof(POINT4D));
 		memcpy(tgeom->edges[edge_id]->s, s, sizeof(POINT4D));
 		memcpy(tgeom->edges[edge_id]->e, e, sizeof(POINT4D));
 		tgeom->edges[edge_id]->count = 1;
@@ -234,18 +234,18 @@ tgeom_add_polygon(TGEOM *tgeom, LWPOLY *poly)
 	/* handle face array allocation */
 	if (tgeom->maxfaces == 0)
 	{
-		tgeom->faces = lwalloc(sizeof(TFACE*) * 2);
+		tgeom->faces = (TFACE **)lwalloc(sizeof(TFACE*) * 2);
 		tgeom->maxfaces = 2;
 	}
 	if ((tgeom->maxfaces - 1) == tgeom->nfaces)
 	{
-		tgeom->faces = lwrealloc(tgeom->faces,
+		tgeom->faces = (TFACE **)lwrealloc(tgeom->faces,
 		                         sizeof(TFACE*) * tgeom->maxfaces * 2);
 		tgeom->maxfaces *= 2;
 	}
 
 	/* add an empty face */
-	tgeom->faces[tgeom->nfaces] = lwalloc(sizeof(TFACE));
+	tgeom->faces[tgeom->nfaces] = (TFACE *)lwalloc(sizeof(TFACE));
 	tgeom->faces[tgeom->nfaces]->rings = NULL;
 	tgeom->faces[tgeom->nfaces]->nrings = 0;
 	tgeom->faces[tgeom->nfaces]->nedges = 0;
@@ -266,7 +266,7 @@ tgeom_add_polygon(TGEOM *tgeom, LWPOLY *poly)
 
 	/* handle rings array allocation */
 	if (tgeom->faces[tgeom->nfaces]->nrings >= 1)
-		tgeom->faces[tgeom->nfaces]->rings = lwalloc(sizeof(POINTARRAY*)
+		tgeom->faces[tgeom->nfaces]->rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY*)
 		                                     * tgeom->faces[tgeom->nfaces]->nrings);
 
 	/* clone internal rings */
@@ -310,18 +310,18 @@ tgeom_add_triangle(TGEOM *tgeom, LWTRIANGLE *triangle)
 	/* handle face array allocation */
 	if (tgeom->maxfaces == 0)
 	{
-		tgeom->faces = lwalloc(sizeof(TFACE*) * 2);
+		tgeom->faces = (TFACE **)lwalloc(sizeof(TFACE*) * 2);
 		tgeom->maxfaces = 2;
 	}
 	if ((tgeom->maxfaces - 1) <= tgeom->nfaces)
 	{
-		tgeom->faces = lwrealloc(tgeom->faces,
+		tgeom->faces = (TFACE **)lwrealloc(tgeom->faces,
 		                         sizeof(TFACE*) * tgeom->maxfaces * 2);
 		tgeom->maxfaces *= 2;
 	}
 
 	/* add an empty face */
-	tgeom->faces[tgeom->nfaces] = lwalloc(sizeof(TFACE));
+	tgeom->faces[tgeom->nfaces] = (TFACE *)lwalloc(sizeof(TFACE));
 	tgeom->faces[tgeom->nfaces]->rings = NULL;
 	tgeom->faces[tgeom->nfaces]->nrings = 0;
 	tgeom->faces[tgeom->nfaces]->nedges = 0;
@@ -469,7 +469,7 @@ tgeom_from_lwgeom(const LWGEOM *lwgeom)
 	else FLAGS_SET_SOLID(tgeom->flags, 0);
 
 	/* compute bbox */
-	tgeom->bbox = lwalloc(sizeof(BOX3D));
+	tgeom->bbox = (BOX3D *)lwalloc(sizeof(BOX3D));
 	for (i=1 ; i <= tgeom->nedges ; i++) {
 
 		if (i == 1 || tgeom->edges[i]->s->x < tgeom->bbox->xmin) tgeom->bbox->xmin = tgeom->edges[i]->s->x;
@@ -589,7 +589,7 @@ lwgeom_from_tgeom(TGEOM *tgeom)
 			else
 				ptarray_append_point(dpa, tgeom->edges[-edge_id]->e, LW_TRUE);
 
-			ppa = lwalloc(sizeof(POINTARRAY*)
+			ppa = (POINTARRAY **)lwalloc(sizeof(POINTARRAY*)
 			              * (tgeom->faces[i]->nrings + 1));
 			ppa[0] = dpa;
 			for (k=0; k < tgeom->faces[i]->nrings ; k++)
@@ -803,7 +803,7 @@ tgeom_serialize(const TGEOM *tgeom)
 	TSERIALIZED * t;
 	uint8_t *data;
 	size = tgeom_serialize_size(tgeom);
-	data = lwalloc(size);
+	data = (uint8_t *)lwalloc(size);
 	tgeom_serialize_buf(tgeom, data, &retsize);
 
 	if ( retsize != size )
@@ -812,7 +812,7 @@ tgeom_serialize(const TGEOM *tgeom)
 		        size, retsize);
 	}
 
-	t = lwalloc(sizeof(TSERIALIZED));
+	t = (TSERIALIZED *)lwalloc(sizeof(TSERIALIZED));
 	t->flags = tgeom->flags;
 	t->srid = tgeom->srid;
 	t->data = data;
@@ -858,7 +858,7 @@ tgeom_deserialize(TSERIALIZED *serialized_form)
 	/* bbox */
 	if (FLAGS_GET_BBOX(flags))
 	{
-		result->bbox = lwalloc(sizeof(BOX3D));
+		result->bbox = (BOX3D *)lwalloc(sizeof(BOX3D));
 		memcpy(&(result->bbox->xmin), loc, sizeof(float));
 		loc += sizeof(float);
 		memcpy(&(result->bbox->ymin), loc, sizeof(float));
@@ -879,12 +879,12 @@ tgeom_deserialize(TSERIALIZED *serialized_form)
 	loc  += 4;
 
 	/* edges */
-	result->edges = lwalloc(sizeof(TEDGE*) * (result->nedges + 1));
+	result->edges = (TEDGE **)lwalloc(sizeof(TEDGE*) * (result->nedges + 1));
 	for (i=1 ; i <= result->nedges ; i++)
 	{
-		result->edges[i] = lwalloc(sizeof(TEDGE));
-		result->edges[i]->s = lwalloc(sizeof(POINT4D));
-		result->edges[i]->e = lwalloc(sizeof(POINT4D));
+		result->edges[i] = (TEDGE *)lwalloc(sizeof(TEDGE));
+		result->edges[i]->s = (POINT4D *)lwalloc(sizeof(POINT4D));
+		result->edges[i]->e = (POINT4D *)lwalloc(sizeof(POINT4D));
 
 		/* 3DM specific handle */
 		if (!FLAGS_GET_Z(result->flags) && FLAGS_GET_M(result->flags))
@@ -905,7 +905,7 @@ tgeom_deserialize(TSERIALIZED *serialized_form)
 			       sizeof(double) * FLAGS_NDIMS(flags));
 			loc  += sizeof(double) * FLAGS_NDIMS(flags);
 
-			result->edges[i]->e = lwalloc(sizeof(POINT4D));
+			result->edges[i]->e = (POINT4D *)lwalloc(sizeof(POINT4D));
 			memcpy(result->edges[i]->e, loc,
 			       sizeof(double) * FLAGS_NDIMS(flags));
 			loc  += sizeof(double) * FLAGS_NDIMS(flags);
@@ -920,17 +920,17 @@ tgeom_deserialize(TSERIALIZED *serialized_form)
 	loc  += 4;
 
 	/* faces */
-	result->faces = lwalloc(sizeof(TFACE*) * result->nfaces);
+	result->faces = (TFACE **)lwalloc(sizeof(TFACE*) * result->nfaces);
 	for (i=0 ; i < result->nfaces ; i++)
 	{
-		result->faces[i] = lwalloc(sizeof(TFACE));
+		result->faces[i] = (TFACE *)lwalloc(sizeof(TFACE));
 
 		/* number of edges */
 		result->faces[i]->nedges = lw_get_uint32_t(loc);
 		loc  += 4;
 
 		/* edges array */
-		result->faces[i]->edges = lwalloc(sizeof(TEDGE*)
+		result->faces[i]->edges = (int32_t *)lwalloc(sizeof(TEDGE*)
 		                                  * result->faces[i]->nedges);
 		memcpy(result->faces[i]->edges, loc, sizeof(int32_t)
 		       * result->faces[i]->nedges);
@@ -941,7 +941,7 @@ tgeom_deserialize(TSERIALIZED *serialized_form)
 		loc  += 4;
 
 		if (result->faces[i]->nrings)
-			result->faces[i]->rings = lwalloc(sizeof(POINTARRAY*)
+			result->faces[i]->rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY*)
 			                                  * result->faces[i]->nrings);
 
 		for (j=0 ; j < result->faces[i]->nrings ; j++)

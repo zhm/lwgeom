@@ -120,7 +120,7 @@ lwline_split_by_line(const LWLINE* lwline_in, const LWLINE* blade_in)
 
 	if ( ! lwtype_is_collection(diff->type) )
 	{
-		components = lwalloc(sizeof(LWGEOM*)*1);
+		components = (LWGEOM **)lwalloc(sizeof(LWGEOM*)*1);
 		components[0] = diff;
 		out = lwcollection_construct(COLLECTIONTYPE, lwline_in->srid,
 		                             NULL, 1, components);
@@ -333,7 +333,7 @@ lwpoly_split_by_line(const LWPOLY* lwpoly_in, const LWLINE* blade_in)
 	out = lwcollection_construct_empty(COLLECTIONTYPE, lwpoly_in->srid,
 				     hasZ, 0);
 	/* Allocate space for all polys */
-	out->geoms = lwalloc(sizeof(LWGEOM*)*n);
+	out->geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM*)*n);
 	assert(0 == out->ngeoms);
 	for (i=0; i<n; ++i)
 	{
@@ -398,7 +398,7 @@ lwcollection_split(const LWCOLLECTION* lwcoll_in, const LWGEOM* blade_in)
 	size_t i,j;
 
 	split_vector_capacity=8;
-	split_vector = lwalloc(split_vector_capacity * sizeof(LWGEOM*));
+	split_vector = (LWGEOM **)lwalloc(split_vector_capacity * sizeof(LWGEOM*));
 	if ( ! split_vector )
 	{
 		lwerror("Out of virtual memory");
@@ -421,7 +421,7 @@ lwcollection_split(const LWCOLLECTION* lwcoll_in, const LWGEOM* blade_in)
 		{
 			/* NOTE: we could be smarter on reallocations here */
 			split_vector_capacity += col->ngeoms;
-			split_vector = lwrealloc(split_vector,
+			split_vector = (LWGEOM **)lwrealloc(split_vector,
 			                         split_vector_capacity * sizeof(LWGEOM*));
 			if ( ! split_vector )
 			{

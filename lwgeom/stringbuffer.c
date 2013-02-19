@@ -57,8 +57,8 @@ stringbuffer_create_with_size(size_t size)
 {
 	stringbuffer_t *s;
 
-	s = lwalloc(sizeof(stringbuffer_t));
-	s->str_start = lwalloc(size);
+	s = (stringbuffer_t *)lwalloc(sizeof(stringbuffer_t));
+	s->str_start = (char *)lwalloc(size);
 	s->str_end = s->str_start;
 	s->capacity = size;
 	memset(s->str_start,0,size);
@@ -103,7 +103,7 @@ stringbuffer_makeroom(stringbuffer_t *s, size_t size_to_add)
 
 	if ( capacity > s->capacity )
 	{
-		s->str_start = lwrealloc(s->str_start, capacity);
+		s->str_start = (char *)lwrealloc(s->str_start, capacity);
 		s->capacity = capacity;
 		s->str_end = s->str_start + current_size;
 	}
@@ -154,7 +154,7 @@ char*
 stringbuffer_getstringcopy(stringbuffer_t *s)
 {
 	size_t size = (s->str_end - s->str_start) + 1;
-	char *str = lwalloc(size);
+	char *str = (char *)lwalloc(size);
 	memcpy(str, s->str_start, size);
 	str[size - 1] = '\0';
 	return str;
@@ -203,7 +203,11 @@ stringbuffer_avprintf(stringbuffer_t *s, const char *fmt, va_list ap)
 
 	/* Make a copy of the variadic arguments, in case we need to print twice */
 	/* Print to our buffer */
+#if defined(_MSC_VER)
+	ap2 = ap;
+#else
 	va_copy(ap2, ap);
+#endif
 	len = vsnprintf(s->str_end, maxlen, fmt, ap2);
 	va_end(ap2);
 

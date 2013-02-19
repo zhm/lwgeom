@@ -473,11 +473,11 @@ lwmline_clip_to_ordinate_range(const LWMLINE *mline, char ordinate, double from,
 					geoms_size += 16;
 					if ( lwgeom_out->geoms )
 					{
-						lwgeom_out->geoms = lwrealloc(lwgeom_out->geoms, geoms_size * sizeof(LWGEOM*));
+						lwgeom_out->geoms = (LWGEOM **)lwrealloc(lwgeom_out->geoms, geoms_size * sizeof(LWGEOM*));
 					}
 					else
 					{
-						lwgeom_out->geoms = lwalloc(geoms_size * sizeof(LWGEOM*));
+						lwgeom_out->geoms = (LWGEOM **)lwalloc(geoms_size * sizeof(LWGEOM*));
 					}
 				}
 				for ( j = 0; j < col->ngeoms; j++ )
@@ -558,9 +558,9 @@ lwline_clip_to_ordinate_range(const LWLINE *line, char ordinate, double from, do
 	}
 
 	/* Prepare our working point objects. */
-	p = lwalloc(sizeof(POINT4D));
-	q = lwalloc(sizeof(POINT4D));
-	r = lwalloc(sizeof(POINT4D));
+	p = (POINT4D *)lwalloc(sizeof(POINT4D));
+	q = (POINT4D *)lwalloc(sizeof(POINT4D));
+	r = (POINT4D *)lwalloc(sizeof(POINT4D));
 
 	/* Construct a collection to hold our outputs. */
 	lwgeom_out = lwcollection_construct_empty(MULTILINETYPE, line->srid, hasz, hasm);

@@ -65,13 +65,13 @@ lwpoly_construct(int srid, GBOX *bbox, uint32_t nrings, POINTARRAY **points)
 LWPOLY*
 lwpoly_construct_empty(int srid, char hasz, char hasm)
 {
-	LWPOLY *result = lwalloc(sizeof(LWPOLY));
+	LWPOLY *result = (LWPOLY *)lwalloc(sizeof(LWPOLY));
 	result->type = POLYGONTYPE;
 	result->flags = gflags(hasz,hasm,0);
 	result->srid = srid;
 	result->nrings = 0;
 	result->maxrings = 1; /* Allocate room for ring, just in case. */
-	result->rings = lwalloc(result->maxrings * sizeof(POINTARRAY*));
+	result->rings = (POINTARRAY **)lwalloc(result->maxrings * sizeof(POINTARRAY*));
 	result->bbox = NULL;
 	return result;
 }
@@ -120,9 +120,9 @@ LWPOLY *
 lwpoly_clone(const LWPOLY *g)
 {
 	int i;
-	LWPOLY *ret = lwalloc(sizeof(LWPOLY));
+	LWPOLY *ret = (LWPOLY *)lwalloc(sizeof(LWPOLY));
 	memcpy(ret, g, sizeof(LWPOLY));
-	ret->rings = lwalloc(sizeof(POINTARRAY *)*g->nrings);
+	ret->rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*g->nrings);
 	for ( i = 0; i < g->nrings; i++ ) {
 		ret->rings[i] = ptarray_clone(g->rings[i]);
 	}
@@ -135,10 +135,10 @@ LWPOLY *
 lwpoly_clone_deep(const LWPOLY *g)
 {
 	int i;
-	LWPOLY *ret = lwalloc(sizeof(LWPOLY));
+	LWPOLY *ret = (LWPOLY *)lwalloc(sizeof(LWPOLY));
 	memcpy(ret, g, sizeof(LWPOLY));
 	if ( g->bbox ) ret->bbox = gbox_copy(g->bbox);
-	ret->rings = lwalloc(sizeof(POINTARRAY *)*g->nrings);
+	ret->rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*g->nrings);
 	for ( i = 0; i < ret->nrings; i++ )
 	{
 		ret->rings[i] = ptarray_clone_deep(g->rings[i]);
@@ -160,7 +160,7 @@ lwpoly_add_ring(LWPOLY *poly, POINTARRAY *pa)
 	if( poly->nrings >= poly->maxrings ) 
 	{
 		int new_maxrings = 2 * (poly->nrings + 1);
-		poly->rings = lwrealloc(poly->rings, new_maxrings * sizeof(POINTARRAY*));
+		poly->rings = (POINTARRAY **)lwrealloc(poly->rings, new_maxrings * sizeof(POINTARRAY*));
 	}
 	
 	/* Add the new ring entry. */
@@ -211,7 +211,7 @@ lwpoly_segmentize2d(LWPOLY *poly, double dist)
 	POINTARRAY **newrings;
 	uint32_t i;
 
-	newrings = lwalloc(sizeof(POINTARRAY *)*poly->nrings);
+	newrings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*poly->nrings);
 	for (i=0; i<poly->nrings; i++)
 	{
 		newrings[i] = ptarray_segmentize2d(poly->rings[i], dist);
@@ -250,7 +250,7 @@ lwpoly_from_lwlines(const LWLINE *shell,
                     uint32_t nholes, const LWLINE **holes)
 {
 	uint32_t nrings;
-	POINTARRAY **rings = lwalloc((nholes+1)*sizeof(POINTARRAY *));
+	POINTARRAY **rings = (POINTARRAY **)lwalloc((nholes+1)*sizeof(POINTARRAY *));
 	int srid = shell->srid;
 	LWPOLY *ret;
 
@@ -285,7 +285,7 @@ lwpoly_remove_repeated_points(LWPOLY *poly)
 	uint32_t i;
 	POINTARRAY **newrings;
 
-	newrings = lwalloc(sizeof(POINTARRAY *)*poly->nrings);
+	newrings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*poly->nrings);
 	for (i=0; i<poly->nrings; i++)
 	{
 		newrings[i] = ptarray_remove_repeated_points(poly->rings[i]);
@@ -312,7 +312,7 @@ lwpoly_force_dims(const LWPOLY *poly, int hasz, int hasm)
 	{
 		POINTARRAY **rings = NULL;
 		int i;
-		rings = lwalloc(sizeof(POINTARRAY*) * poly->nrings);
+		rings = (POINTARRAY **)lwalloc(sizeof(POINTARRAY*) * poly->nrings);
 		for( i = 0; i < poly->nrings; i++ )
 		{
 			rings[i] = ptarray_force_dims(poly->rings[i], hasz, hasm);

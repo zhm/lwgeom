@@ -800,7 +800,7 @@ GSERIALIZED* gserialized_from_lwgeom(LWGEOM *geom, int is_geodetic, size_t *size
 
 	/* Set up the uint8_t buffer into which we are going to write the serialized geometry. */
 	expected_size = gserialized_from_lwgeom_size(geom);
-	serialized = lwalloc(expected_size);
+	serialized = (uint8_t *)lwalloc(expected_size);
 	ptr = serialized;
 
 	/* Move past size, srid and flags. */
@@ -1051,7 +1051,7 @@ static LWCOLLECTION* lwcollection_from_gserialized_buffer(uint8_t *data_ptr, uin
 	data_ptr += 4; /* Skip past the ngeoms. */
 
 	if ( ngeoms > 0 )
-		collection->geoms = lwalloc(sizeof(LWGEOM*) * ngeoms);
+		collection->geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM*) * ngeoms);
 	else
 		collection->geoms = NULL;
 

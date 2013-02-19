@@ -349,7 +349,7 @@ lwcurvepoly_segmentize(const LWCURVEPOLY *curvepoly, uint32_t perQuad)
 
 	LWDEBUG(2, "lwcurvepoly_segmentize called.");
 
-	ptarray = lwalloc(sizeof(POINTARRAY *)*curvepoly->nrings);
+	ptarray = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*curvepoly->nrings);
 
 	for (i = 0; i < curvepoly->nrings; i++)
 	{
@@ -392,7 +392,7 @@ lwmcurve_segmentize(LWMCURVE *mcurve, uint32_t perQuad)
 
 	LWDEBUGF(2, "lwmcurve_segmentize called, geoms=%d, dim=%d.", mcurve->ngeoms, FLAGS_NDIMS(mcurve->flags));
 
-	lines = lwalloc(sizeof(LWGEOM *)*mcurve->ngeoms);
+	lines = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*mcurve->ngeoms);
 
 	for (i = 0; i < mcurve->ngeoms; i++)
 	{
@@ -428,7 +428,7 @@ lwmsurface_segmentize(LWMSURFACE *msurface, uint32_t perQuad)
 
 	LWDEBUG(2, "lwmsurface_segmentize called.");
 
-	polys = lwalloc(sizeof(LWGEOM *)*msurface->ngeoms);
+	polys = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*msurface->ngeoms);
 
 	for (i = 0; i < msurface->ngeoms; i++)
 	{
@@ -440,7 +440,7 @@ lwmsurface_segmentize(LWMSURFACE *msurface, uint32_t perQuad)
 		else if (tmp->type == POLYGONTYPE)
 		{
 			poly = (LWPOLY *)tmp;
-			ptarray = lwalloc(sizeof(POINTARRAY *)*poly->nrings);
+			ptarray = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*poly->nrings);
 			for (j = 0; j < poly->nrings; j++)
 			{
 				ptarray[j] = ptarray_clone_deep(poly->rings[j]);
@@ -462,7 +462,7 @@ lwcollection_segmentize(LWCOLLECTION *collection, uint32_t perQuad)
 
 	LWDEBUG(2, "lwcollection_segmentize called.");
 
-	geoms = lwalloc(sizeof(LWGEOM *)*collection->ngeoms);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*collection->ngeoms);
 
 	for (i=0; i<collection->ngeoms; i++)
 	{
@@ -625,7 +625,7 @@ pta_desegmentize(POINTARRAY *points, int type, int srid)
 	
 	/* Allocate our result array of vertices that are part of arcs */
 	num_edges = points->npoints - 1;
-	edges_in_arcs = lwalloc(num_edges);
+	edges_in_arcs = (char *)lwalloc(num_edges);
 	memset(edges_in_arcs, 0, num_edges);
 	
 	/* We make a candidate arc of the first two edges, */
@@ -673,7 +673,7 @@ pta_desegmentize(POINTARRAY *points, int type, int srid)
 	
 #if POSTGIS_DEBUG_LEVEL > 3
 	{
-		char *edgestr = lwalloc(num_edges+1);
+		char *edgestr = (char *)lwalloc(num_edges+1);
 		for ( i = 0; i < num_edges; i++ )
 		{
 			if ( edges_in_arcs[i] )
@@ -731,7 +731,7 @@ lwpolygon_desegmentize(LWPOLY *poly)
 
 	LWDEBUG(2, "lwpolygon_desegmentize called.");
 
-	geoms = lwalloc(sizeof(LWGEOM *)*poly->nrings);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*poly->nrings);
 	for (i=0; i<poly->nrings; i++)
 	{
 		geoms[i] = pta_desegmentize(poly->rings[i], poly->flags, poly->srid);
@@ -760,7 +760,7 @@ lwmline_desegmentize(LWMLINE *mline)
 
 	LWDEBUG(2, "lwmline_desegmentize called.");
 
-	geoms = lwalloc(sizeof(LWGEOM *)*mline->ngeoms);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*mline->ngeoms);
 	for (i=0; i<mline->ngeoms; i++)
 	{
 		geoms[i] = lwline_desegmentize((LWLINE *)mline->geoms[i]);
@@ -788,7 +788,7 @@ lwmpolygon_desegmentize(LWMPOLY *mpoly)
 
 	LWDEBUG(2, "lwmpoly_desegmentize called.");
 
-	geoms = lwalloc(sizeof(LWGEOM *)*mpoly->ngeoms);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*mpoly->ngeoms);
 	for (i=0; i<mpoly->ngeoms; i++)
 	{
 		geoms[i] = lwpolygon_desegmentize((LWPOLY *)mpoly->geoms[i]);

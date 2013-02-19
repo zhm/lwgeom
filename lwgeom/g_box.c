@@ -28,7 +28,7 @@ void gbox_init(GBOX *gbox)
 
 GBOX* gbox_clone(const GBOX *gbox)
 {
-	GBOX *g = lwalloc(sizeof(GBOX));
+	GBOX *g = (GBOX *)lwalloc(sizeof(GBOX));
 	memcpy(g, gbox, sizeof(GBOX));
 	return g;
 }
@@ -39,7 +39,7 @@ BOX3D* box3d_from_gbox(const GBOX *gbox)
 	BOX3D *b;
 	assert(gbox);
 	
-	b = lwalloc(sizeof(BOX3D));
+	b = (BOX3D *)lwalloc(sizeof(BOX3D));
 
 	b->xmin = gbox->xmin;
 	b->xmax = gbox->xmax;
@@ -66,7 +66,7 @@ GBOX* box3d_to_gbox(const BOX3D *b3d)
 	GBOX *b;
 	assert(b3d);
 	
-	b = lwalloc(sizeof(GBOX));
+	b = (GBOX *)lwalloc(sizeof(GBOX));
 
 	b->xmin = b3d->xmin;
 	b->xmax = b3d->xmax;
@@ -243,7 +243,7 @@ GBOX* gbox_from_string(const char *str)
 {
 	const char *ptr = str;
 	char *nextptr;
-	char *gbox_start = strstr(str, "GBOX((");
+	char *gbox_start = (char *)strstr(str, "GBOX((");
 	GBOX *gbox = gbox_new(gflags(0,0,1));
 	if ( ! gbox_start ) return NULL; /* No header found */
 	ptr += 6;

@@ -130,7 +130,7 @@ GEOS2LWGEOM(const GEOSGeometry *geom, char want3d)
 
 	case GEOS_POINT:
 		LWDEBUG(4, "lwgeom_from_geometry: it's a Point");
-		cs = GEOSGeom_getCoordSeq(geom);
+		cs = (GEOSCoordSequence *)GEOSGeom_getCoordSeq(geom);
 		if ( GEOSisEmpty(geom) )
 		  return (LWGEOM*)lwpoint_construct_empty(SRID, want3d, 0);
 		pa = ptarray_from_GEOSCoordSeq(cs, want3d);
@@ -142,7 +142,7 @@ GEOS2LWGEOM(const GEOSGeometry *geom, char want3d)
 		if ( GEOSisEmpty(geom) )
 		  return (LWGEOM*)lwline_construct_empty(SRID, want3d, 0);
 
-		cs = GEOSGeom_getCoordSeq(geom);
+		cs = (GEOSCoordSequence *)GEOSGeom_getCoordSeq(geom);
 		pa = ptarray_from_GEOSCoordSeq(cs, want3d);
 		return (LWGEOM *)lwline_construct(SRID, NULL, pa);
 
@@ -151,14 +151,14 @@ GEOS2LWGEOM(const GEOSGeometry *geom, char want3d)
 		if ( GEOSisEmpty(geom) )
 		  return (LWGEOM*)lwpoly_construct_empty(SRID, want3d, 0);
 		ngeoms = GEOSGetNumInteriorRings(geom);
-		ppaa = lwalloc(sizeof(POINTARRAY *)*(ngeoms+1));
-		g = GEOSGetExteriorRing(geom);
-		cs = GEOSGeom_getCoordSeq(g);
+		ppaa = (POINTARRAY **)lwalloc(sizeof(POINTARRAY *)*(ngeoms+1));
+		g = (GEOSGeometry *)GEOSGetExteriorRing(geom);
+		cs = (GEOSCoordSequence *)GEOSGeom_getCoordSeq(g);
 		ppaa[0] = ptarray_from_GEOSCoordSeq(cs, want3d);
 		for (i=0; i<ngeoms; i++)
 		{
-			g = GEOSGetInteriorRingN(geom, i);
-			cs = GEOSGeom_getCoordSeq(g);
+			g = (GEOSGeometry *)GEOSGetInteriorRingN(geom, i);
+			cs = (GEOSCoordSequence *)GEOSGeom_getCoordSeq(g);
 			ppaa[i+1] = ptarray_from_GEOSCoordSeq(cs,
 			                                      want3d);
 		}
@@ -175,10 +175,10 @@ GEOS2LWGEOM(const GEOSGeometry *geom, char want3d)
 		geoms = NULL;
 		if ( ngeoms )
 		{
-			geoms = lwalloc(sizeof(LWGEOM *)*ngeoms);
+			geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*ngeoms);
 			for (i=0; i<ngeoms; i++)
 			{
-				g = GEOSGetGeometryN(geom, i);
+				g = (GEOSGeometry *)GEOSGetGeometryN(geom, i);
 				geoms[i] = GEOS2LWGEOM(g, want3d);
 			}
 		}
@@ -262,15 +262,16 @@ LWGEOM2GEOS(const LWGEOM *lwgeom)
 		return NULL;
 	}
 	
+  LWPOINT *lwp = NULL;
+  LWPOLY *lwpoly = NULL;
+  LWLINE *lwl = NULL;
+  LWCOLLECTION *lwc = NULL;
+#if POSTGIS_GEOS_VERSION < 33
+  POINTARRAY *pa = NULL;
+#endif
+
 	switch (lwgeom->type)
 	{
-		LWPOINT *lwp = NULL;
-		LWPOLY *lwpoly = NULL;
-		LWLINE *lwl = NULL;
-		LWCOLLECTION *lwc = NULL;
-#if POSTGIS_GEOS_VERSION < 33
-		POINTARRAY *pa = NULL;
-#endif
 		
 	case POINTTYPE:
 		lwp = (LWPOINT *)lwgeom;
@@ -337,7 +338,7 @@ LWGEOM2GEOS(const LWGEOM *lwgeom)
 			/*lwerror("LWGEOM2GEOS: exception during polygon shell conversion"); */
 			ngeoms = lwpoly->nrings-1;
 			if ( ngeoms > 0 )
-				geoms = malloc(sizeof(GEOSGeom)*ngeoms);
+				geoms = (GEOSGeom *)malloc(sizeof(GEOSGeom)*ngeoms);
 
 			for (i=1; i<lwpoly->nrings; ++i)
 			{
@@ -375,7 +376,7 @@ LWGEOM2GEOS(const LWGEOM *lwgeom)
 
 		ngeoms = lwc->ngeoms;
 		if ( ngeoms > 0 )
-			geoms = malloc(sizeof(GEOSGeom)*ngeoms);
+			geoms = (GEOSGeom *)malloc(sizeof(GEOSGeom)*ngeoms);
 
 		for (i=0; i<ngeoms; ++i)
 		{
@@ -412,7 +413,7 @@ LWGEOM2GEOS(const LWGEOM *lwgeom)
 const char*
 lwgeom_geos_version()
 {
-	const char *ver = GEOSversion();
+	const char *ver = (char *)GEOSversion();
 	return ver;
 }
 
@@ -427,7 +428,7 @@ lwgeom_normalize(const LWGEOM *geom1)
 	srid = (int)(geom1->srid);
 	is3d = FLAGS_GET_Z(geom1->flags);
 
-	initGEOS(lwnotice, lwgeom_geos_error);
+	initGEOS(lwnotice, (GEOSMessageHandler)lwgeom_geos_error);
 
 	g1 = LWGEOM2GEOS(geom1);
 	if ( 0 == g1 )   /* exception thrown at construction */
@@ -478,7 +479,7 @@ lwgeom_intersection(const LWGEOM *geom1, const LWGEOM *geom2)
 
 	is3d = (FLAGS_GET_Z(geom1->flags) || FLAGS_GET_Z(geom2->flags)) ;
 
-	initGEOS(lwnotice, lwgeom_geos_error);
+	initGEOS(lwnotice, (GEOSMessageHandler)lwgeom_geos_error);
 
 	LWDEBUG(3, "intersection() START");
 
@@ -561,7 +562,7 @@ lwgeom_difference(const LWGEOM *geom1, const LWGEOM *geom2)
 
 	is3d = (FLAGS_GET_Z(geom1->flags) || FLAGS_GET_Z(geom2->flags)) ;
 
-	initGEOS(lwnotice, lwgeom_geos_error);
+	initGEOS(lwnotice, (GEOSMessageHandler)lwgeom_geos_error);
 
 	g1 = LWGEOM2GEOS(geom1);
 	if ( 0 == g1 )   /* exception thrown at construction */
@@ -635,7 +636,7 @@ lwgeom_symdifference(const LWGEOM* geom1, const LWGEOM* geom2)
 
 	is3d = (FLAGS_GET_Z(geom1->flags) || FLAGS_GET_Z(geom2->flags)) ;
 
-	initGEOS(lwnotice, lwgeom_geos_error);
+	initGEOS(lwnotice, (GEOSMessageHandler)lwgeom_geos_error);
 
 	g1 = LWGEOM2GEOS(geom1);
 
@@ -711,7 +712,7 @@ lwgeom_union(const LWGEOM *geom1, const LWGEOM *geom2)
 
 	is3d = (FLAGS_GET_Z(geom1->flags) || FLAGS_GET_Z(geom2->flags)) ;
 
-	initGEOS(lwnotice, lwgeom_geos_error);
+	initGEOS(lwnotice, (GEOSMessageHandler)lwgeom_geos_error);
 
 	g1 = LWGEOM2GEOS(geom1);
 
@@ -780,7 +781,7 @@ static void findFaceHoles(Face** faces, int nfaces);
 static Face*
 newFace(const GEOSGeometry* g)
 {
-  Face* f = lwalloc(sizeof(Face));
+  Face* f = (Face *)lwalloc(sizeof(Face));
   f->geom = g;
   f->env = GEOSEnvelope(f->geom);
   GEOSArea(f->env, &f->envarea);
@@ -830,18 +831,19 @@ findFaceHoles(Face** faces, int nfaces)
 
   /* We sort by envelope area so that we know holes are only
    * after their shells */
-  qsort(faces, nfaces, sizeof(Face*), compare_by_envarea);
+  typedef int (*SORTFUNCTION)(const void *, const void *);
+  qsort(faces, nfaces, sizeof(Face*), (int (*)(const void *, const void *))compare_by_envarea);
   for (i=0; i<nfaces; ++i) {
     Face* f = faces[i];
     int nholes = GEOSGetNumInteriorRings(f->geom);
     LWDEBUGF(2, "Scanning face %d with env area %g and %d holes", i, f->envarea, nholes);
     for (h=0; h<nholes; ++h) {
-      const GEOSGeometry *hole = GEOSGetInteriorRingN(f->geom, h);
+      const GEOSGeometry *hole = (GEOSGeometry *)GEOSGetInteriorRingN(f->geom, h);
       LWDEBUGF(2, "Looking for hole %d/%d of face %d among %d other faces", h+1, nholes, i, nfaces-i-1);
       for (j=i+1; j<nfaces; ++j) {
         Face* f2 = faces[j];
         if ( f2->parent ) continue; /* hole already assigned */
-        const GEOSGeometry *f2er = GEOSGetExteriorRing(f2->geom); 
+        const GEOSGeometry *f2er = (GEOSGeometry *)GEOSGetExteriorRing(f2->geom); 
         /* TODO: can be optimized as the ring would have the
          *       same vertices, possibly in different order.
          *       maybe comparing number of points could already be
@@ -860,7 +862,7 @@ findFaceHoles(Face** faces, int nfaces)
 static GEOSGeometry*
 collectFacesWithEvenAncestors(Face** faces, int nfaces)
 {
-  GEOSGeometry **geoms = lwalloc(sizeof(GEOSGeometry*)*nfaces);
+  GEOSGeometry **geoms = (GEOSGeometry **)lwalloc(sizeof(GEOSGeometry*)*nfaces);
   GEOSGeometry *ret;
   unsigned int ngeoms = 0;
   int i;
@@ -981,7 +983,7 @@ LWGEOM_GEOS_buildArea(const GEOSGeometry* geom_in)
 #endif
 
   /* Prepare face structures for later analysis */
-  geoms = lwalloc(sizeof(Face**)*ngeoms);
+  geoms = (Face **)lwalloc(sizeof(Face**)*ngeoms);
   for (i=0; i<ngeoms; ++i)
     geoms[i] = newFace(GEOSGetGeometryN(geos_result, i));
 

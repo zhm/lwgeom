@@ -50,7 +50,7 @@ lwline_construct(int srid, GBOX *bbox, POINTARRAY *points)
 LWLINE *
 lwline_construct_empty(int srid, char hasz, char hasm)
 {
-	LWLINE *result = lwalloc(sizeof(LWLINE));
+	LWLINE *result = (LWLINE *)lwalloc(sizeof(LWLINE));
 	result->type = LINETYPE;
 	result->flags = gflags(hasz,hasm,0);
 	result->srid = srid;
@@ -88,7 +88,7 @@ void printLWLINE(LWLINE *line)
 LWLINE *
 lwline_clone(const LWLINE *g)
 {
-	LWLINE *ret = lwalloc(sizeof(LWLINE));
+	LWLINE *ret = (LWLINE *)lwalloc(sizeof(LWLINE));
 
 	LWDEBUGF(2, "lwline_clone called with %p", g);
 
@@ -104,7 +104,7 @@ lwline_clone(const LWLINE *g)
 LWLINE *
 lwline_clone_deep(const LWLINE *g)
 {
-	LWLINE *ret = lwalloc(sizeof(LWLINE));
+	LWLINE *ret = (LWLINE *)lwalloc(sizeof(LWLINE));
 
 	LWDEBUGF(2, "lwline_clone_deep called with %p", g);
 	memcpy(ret, g, sizeof(LWLINE));
@@ -271,7 +271,7 @@ lwline_from_lwmpoint(int srid, LWMPOINT *mpoint)
 
 	/* Allocate space for output points */
 	size = ptsize*mpoint->ngeoms;
-	newpoints = lwalloc(size);
+	newpoints = (uint8_t *)lwalloc(size);
 	memset(newpoints, 0, size);
 
 	ptr=newpoints;

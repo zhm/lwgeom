@@ -82,7 +82,7 @@ lwmpoint_remove_repeated_points(LWMPOINT *mpoint)
 	uint32_t i, j;
 	LWGEOM **newgeoms;
 
-	newgeoms = lwalloc(sizeof(LWGEOM *)*mpoint->ngeoms);
+	newgeoms = (LWGEOM **)lwalloc(sizeof(LWGEOM *)*mpoint->ngeoms);
 	nnewgeoms = 0;
 	for (i=0; i<mpoint->ngeoms; ++i)
 	{

@@ -294,7 +294,7 @@ char *geohash_point(double longitude, double latitude, int precision)
 	int bit=0, ch=0;
 	char *geohash = NULL;
 
-	geohash = lwalloc(precision + 1);
+	geohash = (char *)lwalloc(precision + 1);
 
 	lat[0] = -90.0;
 	lat[1] = 90.0;

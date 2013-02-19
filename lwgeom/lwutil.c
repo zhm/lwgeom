@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* Global variables */
-#include "../postgis_config.h"
+#include "postgis_config.h"
 #include "liblwgeom_internal.h"
 #include "lwgeom_log.h"
 
@@ -289,7 +289,7 @@ char *lwmessage_truncate(char *str, int startpos, int endpos, int maxlength, int
 	char *outstart;
 
 	/* Allocate space for new string */
-	output = lwalloc(maxlength + 4);
+	output = (char *)lwalloc(maxlength + 4);
 	output[0] = '\0';
 
 	/* Start truncation */

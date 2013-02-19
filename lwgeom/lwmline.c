@@ -72,7 +72,7 @@ lwmline_measured_from_lwmline(const LWMLINE *lwmline, double m_start, double m_e
 		return (LWMLINE*)lwcollection_construct_empty(MULTILINETYPE, lwmline->srid, hasz, hasm);
 	}
 
-	geoms = lwalloc(sizeof(LWGEOM*) * lwmline->ngeoms);
+	geoms = (LWGEOM **)lwalloc(sizeof(LWGEOM*) * lwmline->ngeoms);
 
 	for ( i = 0; i < lwmline->ngeoms; i++ )
 	{

@@ -93,7 +93,7 @@ lwcollection_summary(LWCOLLECTION *col, int offset)
 	{
 		tmp = lwgeom_summary(col->geoms[i], offset+2);
 		size += strlen(tmp)+1;
-		result = lwrealloc(result, size);
+		result = (char *)lwrealloc(result, size);
 
 		LWDEBUGF(4, "Reallocated %d bytes for result", size);
 		if ( i > 0 ) strcat(result,nl);

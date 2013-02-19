@@ -75,7 +75,7 @@ uint8_t* bytes_from_hexbytes(const char *hexbuf, size_t hexsize)
 	if( hexsize % 2 )
 		lwerror("Invalid hex string, length (%d) has to be a multiple of two!", hexsize);
 
-	buf = lwalloc(hexsize/2);
+	buf = (uint8_t *)lwalloc(hexsize/2);
 	
 	if( ! buf )
 		lwerror("Unable to allocate memory buffer.");

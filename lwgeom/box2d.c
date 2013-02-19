@@ -16,7 +16,7 @@
 GBOX *
 box2d_clone(const GBOX *in)
 {
-	GBOX *ret = lwalloc(sizeof(GBOX));
+	GBOX *ret = (GBOX *)lwalloc(sizeof(GBOX));
 	memcpy(ret, in, sizeof(GBOX));
 	return ret;
 }

@@ -16,7 +16,7 @@
 /* Structure for the type array */
 struct geomtype_struct
 {
-	char *typename;
+	char *typename_;
 	int type;
 	int z;
 	int m;
@@ -112,7 +112,7 @@ struct geomtype_struct geomtype_struct_array[] =
 };
 #define GEOMTYPE_STRUCT_ARRAY_LEN (sizeof geomtype_struct_array/sizeof(struct geomtype_struct))
 
-const char dumb_upper_map[128] = "................................................0123456789.......ABCDEFGHIJKLMNOPQRSTUVWXYZ......ABCDEFGHIJKLMNOPQRSTUVWXYZ.....";
+const char dumb_upper_map[129] = "................................................0123456789.......ABCDEFGHIJKLMNOPQRSTUVWXYZ......ABCDEFGHIJKLMNOPQRSTUVWXYZ.....";
 
 static char dump_toupper(int in)
 {
@@ -177,7 +177,7 @@ int geometry_type_from_string(const char *str, uint8_t *type, int *z, int *m)
 	}
 
 	/* Copy and convert to upper case for comparison */
-	tmpstr = lwalloc(tmpendpos - tmpstartpos + 2);
+	tmpstr = (char *)lwalloc(tmpendpos - tmpstartpos + 2);
 	for (i = tmpstartpos; i <= tmpendpos; i++)
 		tmpstr[i - tmpstartpos] = dump_toupper(str[i]);
 
@@ -187,7 +187,7 @@ int geometry_type_from_string(const char *str, uint8_t *type, int *z, int *m)
 	/* Now check for the type */
 	for (i = 0; i < GEOMTYPE_STRUCT_ARRAY_LEN; i++)
 	{
-		if (!strcmp(tmpstr, geomtype_struct_array[i].typename))
+		if (!strcmp(tmpstr, geomtype_struct_array[i].typename_))
 		{
 			*type = geomtype_struct_array[i].type;
 			*z = geomtype_struct_array[i].z;

@@ -192,7 +192,7 @@ asgeojson_point(const LWPOINT *point, char *srs, GBOX *bbox, int precision)
 	int size;
 
 	size = asgeojson_point_size(point, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_point_buf(point, srs, output, bbox, precision);
 	return output;
 }
@@ -239,7 +239,7 @@ asgeojson_line(const LWLINE *line, char *srs, GBOX *bbox, int precision)
 	int size;
 
 	size = asgeojson_line_size(line, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_line_buf(line, srs, output, bbox, precision);
 
 	return output;
@@ -301,7 +301,7 @@ asgeojson_poly(const LWPOLY *poly, char *srs, GBOX *bbox, int precision)
 	int size;
 
 	size = asgeojson_poly_size(poly, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_poly_buf(poly, srs, output, bbox, precision);
 
 	return output;
@@ -365,7 +365,7 @@ asgeojson_multipoint(const LWMPOINT *mpoint, char *srs, GBOX *bbox, int precisio
 	int size;
 
 	size = asgeojson_multipoint_size(mpoint, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_multipoint_buf(mpoint, srs, output, bbox, precision);
 
 	return output;
@@ -433,7 +433,7 @@ asgeojson_multiline(const LWMLINE *mline, char *srs, GBOX *bbox, int precision)
 	int size;
 
 	size = asgeojson_multiline_size(mline, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_multiline_buf(mline, srs, output, bbox, precision);
 
 	return output;
@@ -510,7 +510,7 @@ asgeojson_multipolygon(const LWMPOLY *mpoly, char *srs, GBOX *bbox, int precisio
 	int size;
 
 	size = asgeojson_multipolygon_size(mpoly, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_multipolygon_buf(mpoly, srs, output, bbox, precision);
 
 	return output;
@@ -576,7 +576,7 @@ asgeojson_collection(const LWCOLLECTION *col, char *srs, GBOX *bbox, int precisi
 	int size;
 
 	size = asgeojson_collection_size(col, srs, bbox, precision);
-	output = lwalloc(size);
+	output = (char *)lwalloc(size);
 	asgeojson_collection_buf(col, srs, output, bbox, precision);
 
 	return output;

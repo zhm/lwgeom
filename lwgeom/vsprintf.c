@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include <string.h>
 #include <stdlib.h>
 
-#if __STDC__
+#if __STDC__ || defined(_MSC_VER)
 # include <stdarg.h>
 #else
 # include <varargs.h>
@@ -45,7 +45,7 @@ int global_total_width;
 
 int lw_vasprintf (char **result, const char *format, va_list args);
 int lw_asprintf
-#if __STDC__
+#if __STDC__ || defined(_MSC_VER)
 (char **result, const char *format, ...);
 #else
 (result, va_alist);
@@ -53,12 +53,16 @@ char **result;
 va_dcl
 #endif
 
-
+#if defined(_MSC_VER)
+static int
+int_vasprintf (char **result, const char *format, va_list args)
+#else
 static int
 int_vasprintf (result, format, args)
 char **result;
 const char *format;
 va_list *args;
+#endif
 {
 	const char *p = format;
 	/* Add one to make sure that it is never zero, which might cause malloc
@@ -137,29 +141,42 @@ va_list *args;
 #ifdef TEST
 	global_total_width = total_width;
 #endif
-	*result = malloc (total_width);
+	*result = (char *)malloc (total_width);
 	if (*result != NULL)
+#if defined(_MSC_VER)
+		return vsprintf (*result, format, args);
+#else
 		return vsprintf (*result, format, *args);
+#endif
 	else
 		return 0;
 }
 
+#if defined(_MSC_VER)
+int
+lw_vasprintf (char **result, const char *format, va_list args)
+#else
 int
 lw_vasprintf (result, format, args)
 char **result;
 const char *format;
 va_list args;
+#endif
 {
 	va_list temp;
 
 	va_copy(temp, args);
 
+#if defined(_MSC_VER)
+	return int_vasprintf (result, format, temp);
+#else
 	return int_vasprintf (result, format, &temp);
+#endif
 }
 
 int
 lw_asprintf
-#if __STDC__
+#if __STDC__ || defined(_MSC_VER)
 (char **result, const char *format, ...)
 #else
 (result, va_alist)
@@ -170,7 +187,7 @@ va_dcl
 	va_list args;
 	int done;
 
-#if __STDC__
+#if __STDC__ || defined(_MSC_VER)
 	va_start (args, format);
 #else
 	char *format;

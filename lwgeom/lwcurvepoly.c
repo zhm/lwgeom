@@ -24,13 +24,13 @@ lwcurvepoly_construct_empty(int srid, char hasz, char hasm)
 {
 	LWCURVEPOLY *ret;
 
-	ret = lwalloc(sizeof(LWCURVEPOLY));
+	ret = (LWCURVEPOLY *)lwalloc(sizeof(LWCURVEPOLY));
 	ret->type = CURVEPOLYTYPE;
 	ret->flags = gflags(hasz, hasm, 0);
 	ret->srid = srid;
 	ret->nrings = 0;
 	ret->maxrings = 1; /* Allocate room for sub-members, just in case. */
-	ret->rings = lwalloc(ret->maxrings * sizeof(LWGEOM*));
+	ret->rings = (LWGEOM **)lwalloc(ret->maxrings * sizeof(LWGEOM*));
 	ret->bbox = NULL;
 
 	return ret;
@@ -67,14 +67,14 @@ int lwcurvepoly_add_ring(LWCURVEPOLY *poly, LWGEOM *ring)
 	{
 		poly->maxrings = 2;
 		poly->nrings = 0;
-		poly->rings = lwalloc(poly->maxrings * sizeof(LWGEOM*));
+		poly->rings = (LWGEOM **)lwalloc(poly->maxrings * sizeof(LWGEOM*));
 	}
 
 	/* Allocate more space if we need it */
 	if ( poly->nrings == poly->maxrings )
 	{
 		poly->maxrings *= 2;
-		poly->rings = lwrealloc(poly->rings, sizeof(LWGEOM*) * poly->maxrings);
+		poly->rings = (LWGEOM **)lwrealloc(poly->rings, sizeof(LWGEOM*) * poly->maxrings);
 	}
 
 	/* Make sure we don't already have a reference to this geom */
