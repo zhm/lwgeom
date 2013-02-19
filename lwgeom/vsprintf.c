@@ -43,7 +43,10 @@ int global_total_width;
 # endif
 #endif
 
+#if !defined(_MSC_VER)
 int lw_vasprintf (char **result, const char *format, va_list args);
+#endif
+
 int lw_asprintf
 #if __STDC__ || defined(_MSC_VER)
 (char **result, const char *format, ...);
@@ -54,6 +57,7 @@ va_dcl
 #endif
 
 #if defined(_MSC_VER)
+static
 int
 int_vasprintf (char **result, const char *format, va_list args)
 #else
