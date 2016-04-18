@@ -19,14 +19,11 @@
 // patches for compiling as C++ with MSVC
 #ifdef __cplusplus
 #define _USE_MATH_DEFINES
-#define snprintf _snprintf
 #include <cmath>
 #include <math.h>
 #include <limits.h>
 
 #define DBL_MAX 1.7976931348623158e+308
-#define INFINITY (DBL_MAX+DBL_MAX)
-#define NAN (INFINITY-INFINITY)
 
 inline double round(double x) {
    return x >= 0.0 ? floor(x + 0.5) : ceil(x - 0.5);
